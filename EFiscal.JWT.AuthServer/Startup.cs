@@ -1,11 +1,14 @@
 ﻿using System;
+using AutoMapper;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EFiscal.JWT.AuthServer.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -13,6 +16,9 @@ using Microsoft.Extensions.Options;
 
 namespace EFiscal.JWT.AuthServer
 {
+    //https://github.com/jbogard/ContosoUniversityCore
+    //https://medium.com/ps-its-huuti/how-to-get-started-with-automapper-and-asp-net-core-2-ecac60ef523f
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -25,6 +31,13 @@ namespace EFiscal.JWT.AuthServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<SecurityDbContext>(options =>
+            {
+                options.UseInMemoryDatabase("jwtapi");
+            });
+            
+            services.AddAutoMapper(typeof(Startup)); //AppDomain.CurrentDomain.GetAssemblies()
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

@@ -1,0 +1,5 @@
+﻿dotnet ef migrations add InitialMigration -c SecurityDbContext
+dotnet ef migrations script -c SecurityDbContext -o migrations\migration.sql
+dotnet ef migrations remove -f -c SecurityDbContext
+dotnet ef database update -c SecurityDbContext
+dotnet ef database drop
