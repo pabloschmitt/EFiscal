@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace EFiscal.JWT.AuthServer.Common.Data
+namespace EFiscal.Common.Data
 {
     public class BaseStore<TEntity, TKey, TDbContext> : IDisposable
         where TEntity : class, IBaseEntity<TKey>
@@ -144,6 +144,22 @@ namespace EFiscal.JWT.AuthServer.Common.Data
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
             return Entities.FirstOrDefaultAsync(r => r.NormalizedName == normalizedName, cancellationToken);
+        }
+
+        public virtual TEntity First(
+            Func<TEntity, bool> condition = null, CancellationToken cancellationToken = default(CancellationToken)
+            )
+        {
+            // Add filter is needed
+            if (condition != null)
+            {
+                return Entities.Where(condition).FirstOrDefault();
+            }
+            else
+            {
+                return Entities.FirstOrDefault();
+            }
+
         }
 
         public virtual async Task<List<TEntity>> FindAsync(

@@ -5,7 +5,9 @@ VisualStudioVersion = 15.0.28307.645
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFiscal.JWT.AuthServer", "EFiscal.JWT.AuthServer\EFiscal.JWT.AuthServer.csproj", "{C36A7872-B800-4102-A338-F790A4586A91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFiscal.TempTesting", "EFiscal.TempTesting\EFiscal.TempTesting.csproj", "{F1814DB6-EB5B-41FC-A8A6-05D8FD7ABD2B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFiscal.TempTesting", "EFiscal.TempTesting\EFiscal.TempTesting.csproj", "{F1814DB6-EB5B-41FC-A8A6-05D8FD7ABD2B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFiscal.Common", "EFiscal.Common\EFiscal.Common.csproj", "{CCE52349-A75C-4939-AE51-5D9A4A97AFF1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{F1814DB6-EB5B-41FC-A8A6-05D8FD7ABD2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1814DB6-EB5B-41FC-A8A6-05D8FD7ABD2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1814DB6-EB5B-41FC-A8A6-05D8FD7ABD2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCE52349-A75C-4939-AE51-5D9A4A97AFF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCE52349-A75C-4939-AE51-5D9A4A97AFF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCE52349-A75C-4939-AE51-5D9A4A97AFF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCE52349-A75C-4939-AE51-5D9A4A97AFF1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

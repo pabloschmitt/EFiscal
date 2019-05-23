@@ -13,6 +13,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using EFiscal.JWT.AuthServer.Common.Security;
+using EFiscal.JWT.AuthServer.Data.Stores;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using EFiscal.JWT.AuthServer.Services;
+using EFiscal.JWT.AuthServer.Common.Security.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using TokenHandler = EFiscal.JWT.AuthServer.Common.Security.Tokens.TokenHandler;
 
 namespace EFiscal.JWT.AuthServer
 {
@@ -35,7 +43,54 @@ namespace EFiscal.JWT.AuthServer
             {
                 options.UseInMemoryDatabase("jwtapi");
             });
-            
+
+
+            #region DI
+
+            services.AddSingleton<IPasswordHasher, PasswordHasher>();
+            services.AddSingleton<ITokenHandler, TokenHandler>();
+
+            #endregion
+
+            #region Stores
+
+            services.TryAddScoped<UserStore>();
+            services.TryAddScoped<RoleStore>();
+
+            #endregion
+
+            #region Services
+
+            services.TryAddScoped<UserService>();
+            services.AddScoped<AuthenticationService>();
+
+            #endregion
+
+            #region JWT
+
+            services.Configure<TokenOptions>(Configuration.GetSection("TokenOptions"));
+            var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
+
+            var signingConfigurations = new SigningConfigurations();
+            services.AddSingleton(signingConfigurations);
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(jwtBearerOptions =>
+                {
+                    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = tokenOptions.Issuer,
+                        ValidAudience = tokenOptions.Audience,
+                        IssuerSigningKey = signingConfigurations.Key,
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
+
+            #endregion
+
             services.AddAutoMapper(typeof(Startup)); //AppDomain.CurrentDomain.GetAssemblies()
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -55,6 +110,8 @@ namespace EFiscal.JWT.AuthServer
             }
 
             app.UseHttpsRedirection();
+
+            app.UseAuthentication();
             app.UseMvc();
         }
     }

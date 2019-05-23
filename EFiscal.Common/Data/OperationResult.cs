@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EFiscal.JWT.AuthServer.Common
+namespace EFiscal.Common.Data
 {
     public class OperationResult
     {

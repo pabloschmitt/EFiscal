@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EFiscal.JWT.AuthServer.Common.Data
+namespace EFiscal.Common.Data
 {
     public enum ServiceFindOrderBy
     {

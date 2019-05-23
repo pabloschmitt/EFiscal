@@ -20,9 +20,9 @@ namespace EFiscal.JWT.AuthServer.Data
             base.OnModelCreating(builder);
 
             builder.Entity<User>().HasKey(e => e.Id);
-            builder.Entity<User>().HasIndex(e => new { e.OwnerId, e.Id } ).IsUnique(true);
-            builder.Entity<User>().HasIndex(e => new { e.OwnerId, e.NormalizedName } ).IsUnique(true);
-            builder.Entity<User>().HasIndex(e => new { e.OwnerId, e.NormalizedEmail } ).IsUnique(true);
+            builder.Entity<User>().HasIndex(e => new { e.Id } ).IsUnique(true);
+            builder.Entity<User>().HasIndex(e => new { e.NormalizedName } ).IsUnique(true);
+            builder.Entity<User>().HasIndex(e => new { e.NormalizedEmail } ).IsUnique(true);
 
             builder.Entity<Role>().HasKey(e => e.Id);
             builder.Entity<Role>().HasIndex(e => new { e.NormalizedName }).IsUnique(true);

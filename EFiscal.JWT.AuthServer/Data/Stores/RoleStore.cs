@@ -1,4 +1,5 @@
-﻿using EFiscal.JWT.AuthServer.Common.Data;
+﻿using EFiscal.Common.Data;
+using EFiscal.JWT.AuthServer.Common.Data;
 using EFiscal.JWT.AuthServer.Models.Security;
 using System;
 using System.Collections.Generic;
