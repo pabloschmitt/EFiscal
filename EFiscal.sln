@@ -7,7 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFiscal.JWT.AuthServer", "E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFiscal.TempTesting", "EFiscal.TempTesting\EFiscal.TempTesting.csproj", "{F1814DB6-EB5B-41FC-A8A6-05D8FD7ABD2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFiscal.Common", "EFiscal.Common\EFiscal.Common.csproj", "{CCE52349-A75C-4939-AE51-5D9A4A97AFF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFiscal.Common", "EFiscal.Common\EFiscal.Common.csproj", "{CCE52349-A75C-4939-AE51-5D9A4A97AFF1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CEF425C7-D27D-4F15-8FB3-5A57C5EC3C6C}"
+	ProjectSection(SolutionItems) = preProject
+		Notas.txt = Notas.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

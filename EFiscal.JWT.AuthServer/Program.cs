@@ -34,9 +34,9 @@ namespace EFiscal.JWT.AuthServer
 
             var host = BuildWebHost(args);
 
-            isSeed = true;
-            isTest = true;
-            isExit = true;
+            //isSeed = true;
+            //isTest = true;
+            //isExit = true;
 
             if (isSeed)
             {

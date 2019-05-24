@@ -21,6 +21,10 @@ using EFiscal.JWT.AuthServer.Common.Security.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using TokenHandler = EFiscal.JWT.AuthServer.Common.Security.Tokens.TokenHandler;
+using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Http;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EFiscal.JWT.AuthServer
 {
@@ -35,6 +39,8 @@ namespace EFiscal.JWT.AuthServer
         }
 
         public IConfiguration Configuration { get; }
+
+        readonly string CorsOriginsPolicy = "_CorsOriginsPolicy";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -67,6 +73,23 @@ namespace EFiscal.JWT.AuthServer
             #endregion
 
             #region JWT
+            // Desde Aca
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
+
+            services.AddAuthorization(options =>
+            {
+                options.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
+                    .RequireAuthenticatedUser()
+                    .Build();
+            });
+            // Hasta aca ---
 
             services.Configure<TokenOptions>(Configuration.GetSection("TokenOptions"));
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
@@ -74,26 +97,70 @@ namespace EFiscal.JWT.AuthServer
             var signingConfigurations = new SigningConfigurations();
             services.AddSingleton(signingConfigurations);
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(jwtBearerOptions =>
+            services.AddAuthentication(options =>
+           {
+               options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+               options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                //JwtBearerDefaults.AuthenticationScheme
+            })
+            .AddJwtBearer(jwtBearerOptions =>
+            {
+                jwtBearerOptions.RequireHttpsMetadata = false;
+                jwtBearerOptions.SaveToken = true;
+                jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters()
                 {
-                    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = tokenOptions.Issuer,
-                        ValidAudience = tokenOptions.Audience,
-                        IssuerSigningKey = signingConfigurations.Key,
-                        ClockSkew = TimeSpan.Zero
-                    };
-                });
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = tokenOptions.Issuer,
+                    ValidAudience = tokenOptions.Audience,
+                    IssuerSigningKey = signingConfigurations.Key,
+                    //ClockSkew = TimeSpan.Zero
+                    ClockSkew = TimeSpan.FromMinutes(5),
+                    // Configuracion Adicional
+                    RequireSignedTokens = true,
+                    RequireExpirationTime = true,
+                    RoleClaimType = "roles"
+                };
+            });
 
             #endregion
 
             services.AddAutoMapper(typeof(Startup)); //AppDomain.CurrentDomain.GetAssemblies()
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            #region CORS
+            services.AddCors(options =>
+            {
+                options.AddPolicy(CorsOriginsPolicy,
+                builder =>
+                {
+                    builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()
+                        ;
+                });
+            });
+            #endregion
+
+
+            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+            #region Swagger
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info
+                {
+                    Version = "V1",
+                    Title = "EFiscal.JWT.AuthServer",
+                    Description = "EFiscal.JWT.AuthServer Authentication Server",
+                    TermsOfService = "None",
+                    Contact = new Contact() { Name = "Pablo schmitt", Email = "pablo.schmitt@hotmail.com.ar", Url = "No hay" }
+                });
+            });
+
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -106,10 +173,16 @@ namespace EFiscal.JWT.AuthServer
             else
             {
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                //app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            app.UseSwagger();
+            app.UseSwaggerUI(s =>
+            {
+                s.SwaggerEndpoint("../swagger/v1/swagger.json", "EFiscal.JWT.AuthServer");
+            });
+
+            //app.UseHttpsRedirection();
 
             app.UseAuthentication();
             app.UseMvc();

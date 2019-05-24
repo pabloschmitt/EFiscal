@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using EFiscal.JWT.AuthServer.Controllers.Resources;
+using EFiscal.JWT.AuthServer.Models.Security;
 using EFiscal.JWT.AuthServer.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +24,25 @@ namespace EFiscal.JWT.AuthServer.Controllers
             _mapper = mapper;
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateUserAsync([FromBody] UserCredentialsResource userCredentials)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
+            var user = _mapper.Map<UserCredentialsResource, User>(userCredentials);
+
+            var response = await _userService.CreateUserAsync(user, ERole.Fiscal);
+            if (!response.Success)
+            {
+                return BadRequest(response.Message);
+            }
+
+            var userResource = _mapper.Map<User, UserResource>(response.User);
+            return Ok(userResource);
+        }
 
     }
 }

@@ -92,7 +92,8 @@ namespace EFiscal.JWT.AuthServer.Common.Security.Tokens
 
             foreach (var userRole in user.UserRoles)
             {
-                claims.Add(new Claim(ClaimTypes.Role, userRole.Role.Name));
+                //claims.Add(new Claim(ClaimTypes.Role, userRole.Role.Name));
+                claims.Add(new Claim("roles", userRole.Role.Name.ToLowerInvariant()));
             }
 
             return claims;
